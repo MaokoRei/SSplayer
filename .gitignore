@@ -1,0 +1,8 @@
+# 忽略 SSH Key
+SSplayerKey
+SSplayerKey.pub
+
+# 忽略 IDE 配置和缓存
+.idea/
+__pycache__/
+.ipynb_checkpoints/
