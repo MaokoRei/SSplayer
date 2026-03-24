@@ -27,10 +27,12 @@ class Player:
             self.vulnerable -= 1
         if self.weak > 0:
             self.weak -= 1
+        if self.block > 0:
+            self.block = 0
 
 
     #set state from prompt
-    def input_player_state(player):
+    def input_player_state(self):
         print("=== 输入玩家状态（直接回车表示不修改）===")
 
         def read_int(prompt, current):
@@ -43,12 +45,12 @@ class Player:
                 print("输入无效，保持原值")
                 return current
 
-        player.maxHP = read_int("maxHP", player.maxHP)
-        player.HP = read_int("HP", player.HP)
-        player.block = read_int("block", player.block)
-        player.strength = read_int("strength", player.strength)
-        player.vulnerable = read_int("vulnerable", player.vulnerable)
-        player.dexterity = read_int("dexterity", player.dexterity)
-        player.weak = read_int("weak", player.weak)
+        self.maxHP = read_int("maxHP", self.maxHP)
+        self.HP = read_int("HP", self.HP)
+        self.block = read_int("block", self.block)
+        self.strength = read_int("strength", self.strength)
+        self.vulnerable = read_int("vulnerable", self.vulnerable)
+        self.dexterity = read_int("dexterity", self.dexterity)
+        self.weak = read_int("weak", self.weak)
 
-        print("更新完成：", player)
+        print("更新完成：", self)

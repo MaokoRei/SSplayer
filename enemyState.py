@@ -33,6 +33,8 @@ class Enemy:
             self.vulnerable -= 1
         if self.weak > 0:
             self.weak -= 1
+        if self.block > 0:
+            self.block = 0
 
 
     #set state from prompt

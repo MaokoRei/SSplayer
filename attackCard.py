@@ -1,51 +1,69 @@
+from typing import List
 import pandas as pd
-from typing import List, Optional
-
 
 class AttackCard:
     def __init__(self, card_id: int, name: str, cost: int,
-                 damage: Optional[int] = None, block: Optional[int] = None, draw: Optional[int] = None,
-                 vulnerable: Optional[int] = None, loseHp: Optional[int] = None, toEnemies: Optional[int] = None,
-                 exhaust: Optional[bool] = False, strength: Optional[int] = None,
-                 raiseMaxHp: Optional[int] = None, lostEnemyStrength: Optional[int] = None):
-        # 唯一标识
+                 damage: int = None,
+                 block: int = None,
+                 draw: int = None,
+                 vulnerable: int = None,
+                 loseHp: int = None,
+                 isAOE: bool = False,
+                 exhaust: int = False,
+                 strength: int = None,
+                 raiseMaxHp: int = None,
+                 lostEnemyStrength: int = None,
+                 hitCount: int = None,
+                 isRandomHit: bool = False):
+
         self.card_id = card_id
 
         self.name = name
         self.cost = cost
         self.damage = damage
         self.block = block
-        self.draw = draw #the number of drawing cards
-        self.vulnerable = vulnerable #the number of vulnerable turns
+        self.draw = draw
+        self.vulnerable = vulnerable
         self.loseHp = loseHp
-        self.toEnemies = toEnemies #the number of enemies
-        self.exhaust = exhaust  #is exhaust card or not
+
+        # 新字段
+        self.isAOE = isAOE
+        self.exhaust = exhaust
         self.strength = strength
         self.raiseMaxHp = raiseMaxHp
         self.lostEnemyStrength = lostEnemyStrength
+        self.hitCount = hitCount
+        self.isRandomHit = isRandomHit
 
     def __repr__(self):
         return f"<AttackCard id={self.card_id} name={self.name}>"
 
-
 def load_attack_cards_from_excel(file_path: str) -> List[AttackCard]:
     df = pd.read_excel(file_path)
     cards = []
+
     for idx, row in df.iterrows():
         data = {}
+
         for col in df.columns:
             value = row[col]
-            # start with '#' means dynamic value,init none first
+
             if isinstance(value, str) and value.startswith('#'):
                 value = None
             data[col] = value
-
 
         def safe_int(x):
             try:
                 return int(x)
             except (TypeError, ValueError):
                 return 0
+
+        def safe_bool(x):
+            if isinstance(x, bool):
+                return x
+            if isinstance(x, str):
+                return x.lower() == 'true'
+            return bool(x)
 
         card = AttackCard(
             card_id=idx,
@@ -56,11 +74,17 @@ def load_attack_cards_from_excel(file_path: str) -> List[AttackCard]:
             draw=safe_int(data.get('draw')),
             vulnerable=safe_int(data.get('vulnerable')),
             loseHp=safe_int(data.get('loseHp')),
-            toEnemies=safe_int(data.get('toEnemies')),
-            exhaust=bool(data.get('exhaust', False)),
+
+            # 新字段
+            isAOE=safe_bool(data.get('isAOE')),
+            exhaust=safe_int(data.get('exhaust')),
             strength=safe_int(data.get('strength')),
             raiseMaxHp=safe_int(data.get('raiseMaxHp')),
-            lostEnemyStrength=safe_int(data.get('lostEnemyStrength'))
+            lostEnemyStrength=safe_int(data.get('lostEnemyStrength')),
+            hitCount=safe_int(data.get('hitCount')),
+            isRandomHit=safe_bool(data.get('isRandomHit'))
         )
+
         cards.append(card)
+
     return cards
